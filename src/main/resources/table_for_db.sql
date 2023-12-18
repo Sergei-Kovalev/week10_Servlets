@@ -13,7 +13,7 @@ CREATE TABLE faculties (
 
 INSERT INTO faculties(id, name, teacher, email, actual_visitors, max_visitors, price_per_day)
 VALUES
-    ('773dcbc0-d2fa-45b4-acf8-485b682adedd', 'Geography', 'Ivanov Pert Sidorovich', 'geography@gmail.com', 7, 20, 6.72),
+    ('773dcbc0-d2fa-45b4-acf8-485b682adedd', 'Geography', 'Ivanov Petr Sidorovich', 'geography@gmail.com', 7, 20, 6.72),
     ('8d8cfc84-e77c-4722-b4d6-8e9fdc17c721', 'Mathematics', 'Kobrina Daria Nikolaevna', 'mathematics@somewhere.by', 19, 25, 10.15),
     ('a8014a1e-c14c-410a-abd0-a2bc3014c3b3', 'Physics', 'Gauss Doreman Kolistos', 'physics@somewhere.by', 5, 25, 15.15),
     ('da1a2959-363b-477e-ab23-66ef983a7568', 'Astronomy', 'Copernic Antip Petrovich', 'astronomy@somewhere.by', 16, 30, 6.99),
