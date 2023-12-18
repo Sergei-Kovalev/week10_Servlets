@@ -7,12 +7,14 @@ import com.gmail.kovalev.dto.FacultyDTO;
 import com.gmail.kovalev.dto.FacultyInfoDTO;
 import com.gmail.kovalev.entity.Faculty;
 import com.gmail.kovalev.mapper.FacultyMapper;
-import com.gmail.kovalev.mapper.impl.FacultyMapperImpl;
+import com.gmail.kovalev.mapper.FacultyMapperImpl;
 import com.gmail.kovalev.service.FacultyService;
+import com.gmail.kovalev.util.FacultyCardGenerator;
 import com.gmail.kovalev.validator.FacultyDTOValidator;
 import com.gmail.kovalev.validator.FacultyInfoDTOValidator;
 import com.gmail.kovalev.validator.impl.FacultyDTOValidatorImpl;
 import com.gmail.kovalev.validator.impl.FacultyInfoDTOValidatorImpl;
+import lombok.RequiredArgsConstructor;
 
 import java.lang.reflect.Proxy;
 import java.util.List;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
  * реализация интерфейсов и его методов:
  * @see FacultyService
  */
+@RequiredArgsConstructor
 public class FacultyServiceImpl implements FacultyService {
 
     /**
@@ -51,6 +54,12 @@ public class FacultyServiceImpl implements FacultyService {
     private final FacultyInfoDTOValidator facultyInfoDTOValidator;
 
     /**
+     * Это поле для загрузки генератора PDF страницы с карточкой факультета.
+     * @see FacultyCardGenerator
+     */
+    private final FacultyCardGenerator facultyCardPDFGenerator;
+
+    /**
      * Конструктор класса. Загружает необходимые имплементации сервисов.
      * facultyDAO тянет прокси объект
      */
@@ -61,6 +70,7 @@ public class FacultyServiceImpl implements FacultyService {
 //        this.facultyDAO = new FacultyDAOImpl();
         this.facultyDTOValidator = new FacultyDTOValidatorImpl();
         this.facultyInfoDTOValidator = new FacultyInfoDTOValidatorImpl();
+        this.facultyCardPDFGenerator = new FacultyCardGenerator();
     }
 
     /**
@@ -72,7 +82,9 @@ public class FacultyServiceImpl implements FacultyService {
     public FacultyInfoDTO findFacultyById(UUID uuid) {
         Faculty faculty = facultyDAO.findFacultyById(uuid);
         FacultyInfoDTO facultyInfoDTO = mapper.fromEntityToInfoDTO(faculty);
-        return facultyInfoDTOValidator.validate(facultyInfoDTO);
+        FacultyInfoDTO validFacultyInfoDTO = facultyInfoDTOValidator.validate(facultyInfoDTO);
+        facultyCardPDFGenerator.facultyCardOutputInFile(validFacultyInfoDTO);
+        return validFacultyInfoDTO;
     }
 
     /**
@@ -84,6 +96,7 @@ public class FacultyServiceImpl implements FacultyService {
         return facultyDAO.findAllFaculties().stream()
                 .map(mapper::fromEntityToInfoDTO)
                 .peek(facultyInfoDTOValidator::validate)
+                .peek(facultyCardPDFGenerator::facultyCardOutputInFile)
                 .collect(Collectors.toList());
     }
 
@@ -120,5 +133,10 @@ public class FacultyServiceImpl implements FacultyService {
     @Override
     public String deleteFacultyByUUID(UUID uuid) {
         return facultyDAO.deleteFacultyByUUID(uuid);
+    }
+
+    @Override
+    public String rollbackDeletedFaculty() {
+        return facultyDAO.rollbackDeletedFaculty();
     }
 }

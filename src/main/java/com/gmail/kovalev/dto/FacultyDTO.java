@@ -1,5 +1,7 @@
 package com.gmail.kovalev.dto;
 
+import lombok.experimental.FieldNameConstants;
+
 /**
  * @author Sergey Kovalev
  * Объект для передачи данных в DAO слой из фронта/UI.
@@ -10,6 +12,7 @@ package com.gmail.kovalev.dto;
  * @param maxVisitors - максимальная вместимость факультатива или аудитории
  * @param pricePerDay - стоимость 1го посещения.
  */
+@FieldNameConstants
 public record FacultyDTO(
 
         /**

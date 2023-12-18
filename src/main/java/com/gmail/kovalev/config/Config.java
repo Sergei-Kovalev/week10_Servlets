@@ -11,12 +11,19 @@ import java.util.Map;
  * @author Sergey Kovalev
  * Класс для чтения конфигурации приложения из .yml файла.
  */
-public class Config {
+public final class Config {
+    private static Config instance;
+    public Map<String, Map<String, String>> config;
+
+    private Config() {
+        this.config = loadConfig();
+    }
+
     /**
      * Метод возвращающий ключ-значение параметров приложения.
      * @return ключ-значения.
      */
-    public static Map<String, Map<String, String>> getConfig() {
+    private static Map<String, Map<String, String>> loadConfig() {
         try (InputStream inputStream = new FileInputStream("src/main/resources/properties.yml")) {
             Yaml yaml = new Yaml();
             return yaml.load(inputStream);
@@ -28,5 +35,11 @@ public class Config {
                 throw new RuntimeException(exception);
             }
         }
+    }
+    public static Config getInstance() {
+        if (instance == null) {
+            instance = new Config();
+        }
+        return instance;
     }
 }

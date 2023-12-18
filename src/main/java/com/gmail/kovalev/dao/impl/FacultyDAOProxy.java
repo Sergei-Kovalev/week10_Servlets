@@ -1,9 +1,7 @@
 package com.gmail.kovalev.dao.impl;
 
 import com.gmail.kovalev.cache.Cache;
-import com.gmail.kovalev.cache.impl.LFUCache;
-import com.gmail.kovalev.cache.impl.LRUCache;
-import com.gmail.kovalev.config.Config;
+import com.gmail.kovalev.cacheFactory.CacheFactory;
 import com.gmail.kovalev.dao.FacultyDAO;
 import com.gmail.kovalev.entity.Faculty;
 
@@ -17,17 +15,7 @@ public class FacultyDAOProxy implements InvocationHandler {
 
     public FacultyDAOProxy(FacultyDAO facultyDAO) {
         this.facultyDAO = facultyDAO;
-
-        int cacheCapacity = Integer.parseInt(Config.getConfig().get("application").get("collectionSize"));
-        String cacheType = Config.getConfig().get("application").get("cache");
-
-        if (cacheType.equals("LFU")) {
-            this.cache = new LFUCache<>(cacheCapacity);
-        } else if (cacheType.equals("LRU")){
-            this.cache = new LRUCache<>(cacheCapacity);
-        } else {
-            this.cache = null;
-        }
+        this.cache = CacheFactory.createCacheByName();
     }
 
     @Override
@@ -65,6 +53,9 @@ public class FacultyDAOProxy implements InvocationHandler {
                 String message = (String) method.invoke(facultyDAO, args);
                 cache.remove((UUID) args[0]);
                 return message;
+            }
+            case "rollbackDeletedFaculty" -> {
+                return method.invoke(facultyDAO, args);
             }
         }
         return methodName;

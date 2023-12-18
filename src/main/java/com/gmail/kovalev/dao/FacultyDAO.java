@@ -15,4 +15,6 @@ public interface FacultyDAO {
     String updateFaculty(Faculty faculty);
 
     String deleteFacultyByUUID(UUID uuid);
+
+    String rollbackDeletedFaculty();
 }

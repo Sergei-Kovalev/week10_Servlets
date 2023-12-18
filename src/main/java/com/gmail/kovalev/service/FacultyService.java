@@ -16,4 +16,6 @@ public interface FacultyService {
     String updateFaculty(UUID uuid, FacultyDTO facultyDTO);
 
     String deleteFacultyByUUID(UUID uuid);
+
+    String rollbackDeletedFaculty();
 }

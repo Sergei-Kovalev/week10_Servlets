@@ -55,6 +55,11 @@ public class Controller {
         return gson.toJson(message);
     }
 
+    public String rollbackDeletedFaculty() {
+        String message = service.rollbackDeletedFaculty();
+        return gson.toJson(message);
+    }
+
     public String saveFacultyFromXML(String facultyDTOXml) {
         FacultyDTO facultyDTO;
         try {
@@ -69,5 +74,4 @@ public class Controller {
             throw new RuntimeException(e);
         }
     }
-
 }

@@ -4,6 +4,8 @@ import com.gmail.kovalev.config.Config;
 import com.gmail.kovalev.dao.FacultyDAO;
 import com.gmail.kovalev.entity.Faculty;
 import com.gmail.kovalev.exception.FacultyNotFoundException;
+import com.gmail.kovalev.saver.Save;
+import com.gmail.kovalev.saver.Storage;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -15,6 +17,13 @@ import java.util.List;
 import java.util.UUID;
 
 public class FacultyDAOImpl implements FacultyDAO {
+
+    Storage storage;
+    Faculty faculty;
+
+    public FacultyDAOImpl() {
+        this.storage = new Storage();
+    }
 
     private final static String FIND_BY_ID = "SELECT * FROM faculties WHERE id = ?";
     private final static String FIND_ALL = "SELECT * FROM faculties";
@@ -68,7 +77,10 @@ public class FacultyDAOImpl implements FacultyDAO {
 
     @Override
     public String saveFaculty(Faculty faculty) {
-        UUID uuid = UUID.randomUUID();
+        UUID uuid = faculty.getId();
+        if (uuid == null) {
+            uuid = UUID.randomUUID();
+        }
         try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(SAVE_NEW_FACULTY);
             statement.setObject(1, uuid);
@@ -109,6 +121,10 @@ public class FacultyDAOImpl implements FacultyDAO {
     @Override
     public String deleteFacultyByUUID(UUID uuid) {
         // логикой на проверку есть ли такой объект в базе не нагружал...
+
+        faculty = findFacultyById(uuid);
+        storage.setSave(saveCurrentVersion(faculty));
+
         try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(DELETE_BY_ID);
             statement.setObject(1, uuid);
@@ -118,6 +134,21 @@ public class FacultyDAOImpl implements FacultyDAO {
             throw new RuntimeException(e);
         }
         return "The faculty with UUID: " + uuid + " has been deleted.";
+    }
+
+    @Override
+    public String rollbackDeletedFaculty() {
+        loadPreviousVersion(storage.getSave());
+        saveFaculty(faculty);
+        return "The faculty with UUID: " + faculty.getId() + " has been restored.";
+    }
+
+    public void loadPreviousVersion(Save save) {
+        faculty = save.getFaculty();
+    }
+
+    public Save saveCurrentVersion(Faculty faculty) {
+        return new Save(faculty);
     }
 
     private static void fillFacultyFields(Faculty faculty, ResultSet resultSet) throws SQLException {
@@ -137,9 +168,9 @@ public class FacultyDAOImpl implements FacultyDAO {
             throw new RuntimeException(e);
         }
         return DriverManager.getConnection(
-                Config.getConfig().get("db").get("url"),
-                Config.getConfig().get("db").get("login"),
-                Config.getConfig().get("db").get("password")
+                Config.getInstance().config.get("db").get("url"),
+                Config.getInstance().config.get("db").get("login"),
+                Config.getInstance().config.get("db").get("password")
         );
     }
 }

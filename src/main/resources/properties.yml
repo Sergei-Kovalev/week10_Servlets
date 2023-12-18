@@ -1,8 +1,9 @@
 db:
   url: jdbc:postgresql://localhost:5432/faculty_db
   login: postgres
-  password: '193233'
+  password: postgres
 
 application:
   cache: LRU
   collectionSize: '10'
+  saving strategy: pdf

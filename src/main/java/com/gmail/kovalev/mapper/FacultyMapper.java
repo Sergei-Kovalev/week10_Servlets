@@ -6,11 +6,9 @@ import com.gmail.kovalev.entity.Faculty;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.mapstruct.factory.Mappers;
 
 @Mapper
 public interface FacultyMapper {
-    FacultyMapper INSTANCE = Mappers.getMapper(FacultyMapper.class);
 
     Faculty toFaculty(FacultyDTO facultyDTO);
 

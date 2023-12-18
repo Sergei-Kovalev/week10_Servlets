@@ -1,5 +1,7 @@
 package com.gmail.kovalev.dto;
 
+import lombok.experimental.FieldNameConstants;
+
 import java.util.UUID;
 
 /**
@@ -12,6 +14,7 @@ import java.util.UUID;
  * @param freePlaces - свободные места
  * @param pricePerDay - стоимость 1го посещения.
  */
+@FieldNameConstants
 public record FacultyInfoDTO(
 
         /**

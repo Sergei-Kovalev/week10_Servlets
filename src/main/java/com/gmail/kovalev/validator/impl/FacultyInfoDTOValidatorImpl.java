@@ -50,7 +50,7 @@ public class FacultyInfoDTOValidatorImpl implements FacultyInfoDTOValidator {
      * @throws FacultyInfoDTOFormatException - в случае невалидности поля.
      */
     private static void checkName(String name) throws FacultyInfoDTOFormatException {
-        if (!name.matches("[a-zA-Zа-яёА-ЯЁ\\s]{1,30}")) {
+        if (name == null || !name.matches("[a-zA-Zа-яёА-ЯЁ\\s]{1,30}")) {
             throw new FacultyInfoDTOFormatException(
                     "Из базы пришло неверное значение facultyName (не может быть null или пустым, содержит 1-30 символов(на русском или английском, включая пробелы))"
             );
@@ -63,7 +63,7 @@ public class FacultyInfoDTOValidatorImpl implements FacultyInfoDTOValidator {
      * @throws FacultyInfoDTOFormatException - в случае невалидности поля.
      */
     private static void checkTeacher(String teacher) throws FacultyInfoDTOFormatException {
-        if (!teacher.matches("[a-zA-Zа-яёА-ЯЁ\\s]{1,50}")) {
+        if (teacher == null || !teacher.matches("[a-zA-Zа-яёА-ЯЁ\\s]{1,50}")) {
             throw new FacultyInfoDTOFormatException(
                     "Из базы пришло неверное значение ФИО преподавателя (не может быть null или пустым, содержит 1-50 символов(на русском или английском, включая пробелы))"
             );
@@ -76,9 +76,9 @@ public class FacultyInfoDTOValidatorImpl implements FacultyInfoDTOValidator {
      * @throws FacultyInfoDTOFormatException - в случае невалидности поля.
      */
     private static void checkEmail(String email) throws FacultyInfoDTOFormatException {
-        if (!email.matches("^[\\w_-]+@[\\w_-]+\\.[a-z]{2,}$")) {
+        if (email == null || !email.matches("^[\\w_-]+@[\\w_-]+\\.[a-z]{2,}$")) {
             throw new FacultyInfoDTOFormatException(
-                    "Из базы пришло неверное значение e-mail.. не прошло валидацию!"
+                    "Из базы пришло неверное значение e-mail.. не прошло валидацию либо значение null!"
             );
         }
     }
@@ -89,6 +89,11 @@ public class FacultyInfoDTOValidatorImpl implements FacultyInfoDTOValidator {
      * @throws FacultyInfoDTOFormatException - в случае невалидности поля.
      */
     private static void checkFreePlaces(Integer freePlaces) throws FacultyInfoDTOFormatException {
+        if (freePlaces == null) {
+            throw new FacultyInfoDTOFormatException(
+                    "Из базы пришло неверное количество свободных мест.. не может быть null!"
+            );
+        }
         if (freePlaces < 0) {
             throw new FacultyInfoDTOFormatException(
                     "Из базы пришло неверное количество свободных мест.. не может быть отрицательным!"

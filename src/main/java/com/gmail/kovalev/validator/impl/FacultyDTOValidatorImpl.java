@@ -36,7 +36,8 @@ public class FacultyDTOValidatorImpl implements FacultyDTOValidator {
      * @throws FacultyDTOFormatException - в случае невалидности поля.
      */
     private static void checkName(String name) throws FacultyDTOFormatException {
-        if (!name.matches("[a-zA-Zа-яёА-ЯЁ\\s]{1,30}")) {
+
+        if (name == null || !name.matches("[a-zA-Zа-яёА-ЯЁ\\s]{1,30}")) {
             throw new FacultyDTOFormatException(
                     "Название факультета (не может быть null или пустым, содержит 1-30 символов(на русском или английском, включая пробелы))"
             );
@@ -49,7 +50,7 @@ public class FacultyDTOValidatorImpl implements FacultyDTOValidator {
      * @throws FacultyDTOFormatException - в случае невалидности поля.
      */
     private static void checkTeacher(String teacher) throws FacultyDTOFormatException {
-        if (!teacher.matches("[a-zA-Zа-яёА-ЯЁ\\s]{1,50}")) {
+        if (teacher == null || !teacher.matches("[a-zA-Zа-яёА-ЯЁ\\s]{1,50}")) {
             throw new FacultyDTOFormatException(
                     "ФИО преподавателя (не может быть null или пустым, содержит 1-50 символов(на русском или английском, включая пробелы))"
             );
@@ -62,7 +63,7 @@ public class FacultyDTOValidatorImpl implements FacultyDTOValidator {
      * @throws FacultyDTOFormatException - в случае невалидности поля.
      */
     private static void checkEmail(String email) {
-        if (!email.matches("^[\\w_-]+@[\\w_-]+\\.[a-z]{2,}$")) {
+        if (email == null || !email.matches("^[\\w_-]+@[\\w_-]+\\.[a-z]{2,}$")) {
             throw new FacultyDTOFormatException(
                     "e-mail не прошёл валидацию ... убедитесь что вы ввели его верно!"
             );
@@ -85,7 +86,7 @@ public class FacultyDTOValidatorImpl implements FacultyDTOValidator {
                     "Количество посетителей не может быть меньше нуля"
             );
         }
-        if (actualVisitors > maxVisitors) {
+        if (maxVisitors != null && maxVisitors > 0 && actualVisitors > maxVisitors) {
             throw new FacultyDTOFormatException(
                     "Количество посетителей не может быть больше, чем вмещает группа"
             );
