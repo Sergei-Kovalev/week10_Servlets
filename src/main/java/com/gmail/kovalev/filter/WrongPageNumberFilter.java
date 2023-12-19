@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebFilter(urlPatterns = "/all")
-public class PageFilter implements Filter {
+public class WrongPageNumberFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) {
     }

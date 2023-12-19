@@ -26,7 +26,11 @@ public class RestTest {
         int expected = Integer.parseInt(Config.getInstance().config.get("application").get("page size"));
 
         // when
-        Specifications.installSpecification(Specifications.requestSpecification(URL_MAIN), Specifications.responseSpecificationOk200());
+        Specifications.installSpecification(
+                Specifications.requestSpecification(URL_MAIN),
+                Specifications.responseSpecificationOk200()
+        );
+
         List<FacultyInfoDTO> actual = given()
                 .when()
                 .get("/all?page=1")
@@ -43,7 +47,10 @@ public class RestTest {
     @Test
     public void checkFreePlacesLogic() {
         // given
-        Specifications.installSpecification(Specifications.requestSpecification(URL_MAIN), Specifications.responseSpecificationOk200());
+        Specifications.installSpecification(
+                Specifications.requestSpecification(URL_MAIN),
+                Specifications.responseSpecificationOk200()
+        );
 
         // when
         List<FacultyInfoDTO> actual = given()
@@ -62,7 +69,11 @@ public class RestTest {
     @Test
     public void checkWrongPageNumber() {
         // given
-        Specifications.installSpecification(Specifications.requestSpecification(URL_MAIN), Specifications.responseSpecificationOk200());
+        Specifications.installSpecification(
+                Specifications.requestSpecification(URL_MAIN),
+                Specifications.responseSpecificationOk200()
+        );
+
         List<FacultyInfoDTO> expected = given()
                 .when()
                 .get("/all?page=1")
@@ -86,7 +97,11 @@ public class RestTest {
     @Test
     public void checkGetById() {
         // given
-        Specifications.installSpecification(Specifications.requestSpecification(URL_MAIN), Specifications.responseSpecificationOk200());
+        Specifications.installSpecification(
+                Specifications.requestSpecification(URL_MAIN),
+                Specifications.responseSpecificationOk200()
+        );
+
         UUID uuid = UUID.fromString("773dcbc0-d2fa-45b4-acf8-485b682adedd");
         FacultyInfoDTO expected = FacultyInfoDTOTestData.builder()
                 .withId(uuid)
@@ -117,11 +132,14 @@ public class RestTest {
     }
 
     @Disabled
-    @Description("Проверяет что при ошибке выводится текст FacultyNotFoundException при неверном uuid по запросу Get")
+    @Description("Проверяет что при ошибке выводится текст FacultyNotFoundException при неверном uuid по запросу Get. Статус 404")
     @Test
     public void checkGetByIdNotExists() {
         // given
-        Specifications.installSpecification(Specifications.requestSpecification(URL_MAIN), Specifications.responseSpecificationNotFound500());
+        Specifications.installSpecification(
+                Specifications.requestSpecification(URL_MAIN),
+                Specifications.responseSpecificationNotFound404()
+        );
 
         // when
         String actual = given()
@@ -132,7 +150,7 @@ public class RestTest {
 
         // then
         assertThat(actual)
-                .contains("Faculty with id: 873dcbc0-d2fa-45b4-acf8-485b682adedd not found");
+                .isEqualTo("Faculty with id: 873dcbc0-d2fa-45b4-acf8-485b682adedd not found");
     }
 
     @Disabled
@@ -140,7 +158,11 @@ public class RestTest {
     @Test
     public void checkPost() {
         // given
-        Specifications.installSpecification(Specifications.requestSpecification(URL_MAIN), Specifications.responseSpecificationOk200());
+        Specifications.installSpecification(
+                Specifications.requestSpecification(URL_MAIN),
+                Specifications.responseSpecificationOk200()
+        );
+
         FacultyDTO sent = FacultyDTOTestData.builder()
                 .build().buildFacultyDTO();
 
@@ -162,7 +184,11 @@ public class RestTest {
     @Test
     public void checkPut() {
         // given
-        Specifications.installSpecification(Specifications.requestSpecification(URL_MAIN), Specifications.responseSpecificationOk200());
+        Specifications.installSpecification(
+                Specifications.requestSpecification(URL_MAIN),
+                Specifications.responseSpecificationOk200()
+        );
+
         FacultyDTO sent = FacultyDTOTestData.builder()
                 .build().buildFacultyDTO();
 
@@ -184,8 +210,10 @@ public class RestTest {
     @Test
     public void checkDelete() {
         // given
-        Specifications.installSpecification(Specifications.requestSpecification(URL_MAIN), Specifications.responseSpecificationOk200());
-
+        Specifications.installSpecification(
+                Specifications.requestSpecification(URL_MAIN),
+                Specifications.responseSpecificationOk200()
+        );
 
         // when
         String actual = given()

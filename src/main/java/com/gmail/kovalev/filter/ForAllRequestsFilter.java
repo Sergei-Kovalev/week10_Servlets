@@ -6,7 +6,7 @@ import jakarta.servlet.annotation.WebFilter;
 import java.io.IOException;
 
 @WebFilter(urlPatterns = "/*")
-public class FilterForAllRequests implements Filter {
+public class ForAllRequestsFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) {
     }

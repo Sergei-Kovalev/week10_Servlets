@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.stream.Collectors;
 
 @WebServlet(name = "faculty", urlPatterns = {"/faculty"})
 public class FacultyServlet extends HttpServlet {
@@ -34,6 +35,7 @@ public class FacultyServlet extends HttpServlet {
         ServletInputStream inputStream = req.getInputStream();
         String facultyDTOJSON = convertInputStreamToString(inputStream);
         String message = controller.saveFaculty(facultyDTOJSON);
+        resp.setStatus(200);
         resp.getWriter().println(message);
     }
 
@@ -43,6 +45,7 @@ public class FacultyServlet extends HttpServlet {
         ServletInputStream inputStream = req.getInputStream();
         String facultyDTOJSON = convertInputStreamToString(inputStream);
         String message = controller.updateFaculty(uuidString, facultyDTOJSON);
+        resp.setStatus(200);
         resp.getWriter().println(message);
     }
 
@@ -50,17 +53,17 @@ public class FacultyServlet extends HttpServlet {
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String uuidString = req.getParameter("uuid");
         String message = controller.deleteFacultyByUUID(uuidString);
+        resp.setStatus(200);
         resp.getWriter().println(message);
     }
 
-    public static String convertInputStreamToString(ServletInputStream inputStream) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-        StringBuilder stringBuilder = new StringBuilder();
-        String line;
-        while ((line = bufferedReader.readLine()) != null) {
-            stringBuilder.append(line).append("\n");
+    public static String convertInputStreamToString(ServletInputStream inputStream) {
+        String string = null;
+        if (inputStream != null) {
+            string = new BufferedReader(new InputStreamReader(inputStream))
+                    .lines().collect(Collectors.joining());
         }
-        bufferedReader.close();
-        return stringBuilder.toString();
+
+        return string;
     }
 }

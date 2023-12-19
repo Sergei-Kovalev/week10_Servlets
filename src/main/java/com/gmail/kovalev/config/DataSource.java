@@ -2,10 +2,12 @@ package com.gmail.kovalev.config;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.NoArgsConstructor;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
+@NoArgsConstructor
 public class DataSource {
     private static final HikariConfig config = new HikariConfig();
     private static final HikariDataSource ds;
@@ -17,8 +19,6 @@ public class DataSource {
 
         ds = new HikariDataSource(config);
     }
-
-    private DataSource() {}
 
     public static Connection getConnection() throws SQLException {
         return ds.getConnection();

@@ -21,9 +21,9 @@ public class Specifications {
                 .build();
     }
 
-    public static ResponseSpecification responseSpecificationNotFound500() {
+    public static ResponseSpecification responseSpecificationNotFound404() {
         return new ResponseSpecBuilder()
-                .expectStatusCode(500)
+                .expectStatusCode(404)
                 .build();
     }
 
