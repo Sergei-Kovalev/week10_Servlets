@@ -25,6 +25,7 @@ dependencies {
     implementation 'org.postgresql:postgresql:42.6.0'
 
     compileOnly 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+    implementation 'com.zaxxer:HikariCP:5.1.0'
 
     implementation 'org.yaml:snakeyaml:2.2'
 

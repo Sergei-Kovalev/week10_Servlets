@@ -4,7 +4,6 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
@@ -48,7 +47,7 @@ public final class Config {
             synchronized (Config.class) {
                 localConfig = instance;
                 if (localConfig == null) {
-                    instance = localConfig = new Config();
+                    instance = new Config();
                     instance.initDB(instance.config.get("application").get("reinitialize DB"));
                 }
             }
@@ -64,10 +63,7 @@ public final class Config {
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
-            try (Connection connection = DriverManager.getConnection(
-                    Config.getInstance().config.get("db").get("url"),
-                    Config.getInstance().config.get("db").get("login"),
-                    Config.getInstance().config.get("db").get("password"))) {
+            try (Connection connection = DataSource.getConnection()) {
                 InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("table_for_db.sql");
                 String sql = null;
                 if (inputStream != null) {

@@ -1,6 +1,6 @@
 package com.gmail.kovalev.dao.impl;
 
-import com.gmail.kovalev.config.Config;
+import com.gmail.kovalev.config.DataSource;
 import com.gmail.kovalev.dao.FacultyDAO;
 import com.gmail.kovalev.entity.Faculty;
 import com.gmail.kovalev.exception.FacultyNotFoundException;
@@ -8,7 +8,6 @@ import com.gmail.kovalev.saver.Save;
 import com.gmail.kovalev.saver.Storage;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -46,7 +45,7 @@ public class FacultyDAOImpl implements FacultyDAO {
     @Override
     public Faculty findFacultyById(UUID uuid) throws FacultyNotFoundException {
         Faculty faculty = new Faculty();
-        try (Connection connection = getConnection()) {
+        try (Connection connection = DataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(FIND_BY_ID);
             statement.setObject(1, uuid);
             ResultSet resultSet = statement.executeQuery();
@@ -65,7 +64,7 @@ public class FacultyDAOImpl implements FacultyDAO {
     @Override
     public List<Faculty> findAllFaculties(int page, int pageSize) {
         List<Faculty> allFaculties = new ArrayList<>();
-        try (Connection connection = getConnection()) {
+        try (Connection connection = DataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(FIND_ALL);
             statement.setObject(1, pageSize);
             statement.setObject(2, (page - 1) * pageSize);
@@ -87,7 +86,7 @@ public class FacultyDAOImpl implements FacultyDAO {
         if (uuid == null) {
             uuid = UUID.randomUUID();
         }
-        try (Connection connection = getConnection()) {
+        try (Connection connection = DataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(SAVE_NEW_FACULTY);
             statement.setObject(1, uuid);
             statement.setString(2, faculty.getName());
@@ -107,7 +106,7 @@ public class FacultyDAOImpl implements FacultyDAO {
 
     @Override
     public String updateFaculty(Faculty faculty) {
-        try (Connection connection = getConnection()) {
+        try (Connection connection = DataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(UPDATE_FACULTY);
             statement.setString(1, faculty.getName());
             statement.setString(2, faculty.getTeacher());
@@ -133,7 +132,7 @@ public class FacultyDAOImpl implements FacultyDAO {
         }
         storage.setSave(saveCurrentVersion(faculty));
 
-        try (Connection connection = getConnection()) {
+        try (Connection connection = DataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(DELETE_BY_ID);
             statement.setObject(1, uuid);
 
@@ -167,18 +166,5 @@ public class FacultyDAOImpl implements FacultyDAO {
         faculty.setActualVisitors(resultSet.getInt("actual_visitors"));
         faculty.setMaxVisitors(resultSet.getInt("max_visitors"));
         faculty.setPricePerDay(resultSet.getDouble("price_per_day"));
-    }
-
-    private Connection getConnection() throws SQLException {
-        try {
-            Class.forName("org.postgresql.Driver");
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        return DriverManager.getConnection(
-                Config.getInstance().config.get("db").get("url"),
-                Config.getInstance().config.get("db").get("login"),
-                Config.getInstance().config.get("db").get("password")
-        );
     }
 }
