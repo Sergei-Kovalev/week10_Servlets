@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
  * Класс для чтения конфигурации приложения из .yml файла.
  */
 public final class Config {
-    private static Config instance;
+    private static volatile Config instance;
     public Map<String, Map<String, String>> config;
 
     private Config() {
@@ -42,9 +42,17 @@ public final class Config {
     }
 
     public static Config getInstance() {
-        if (instance == null) {
-            instance = new Config();
-            instance.initDB(instance.config.get("application").get("reinitialize DB"));
+        Config localConfig = instance;
+        if (localConfig == null) {
+
+            synchronized (Config.class) {
+                localConfig = instance;
+                if (localConfig == null) {
+                    instance = localConfig = new Config();
+                    instance.initDB(instance.config.get("application").get("reinitialize DB"));
+                }
+            }
+
         }
         return instance;
     }
