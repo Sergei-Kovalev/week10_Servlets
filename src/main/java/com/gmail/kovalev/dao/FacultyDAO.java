@@ -8,7 +8,7 @@ import java.util.UUID;
 public interface FacultyDAO {
     Faculty findFacultyById(UUID uuid);
 
-    List<Faculty> findAllFaculties();
+    List<Faculty> findAllFaculties(int page, int pageSize);
 
     String saveFaculty(Faculty faculty);
 

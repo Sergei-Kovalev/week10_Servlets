@@ -92,11 +92,11 @@ public class FacultyServiceImpl implements FacultyService {
      * @return список объектов
      */
     @Override
-    public List<FacultyInfoDTO> findAllFaculties() {
-        return facultyDAO.findAllFaculties().stream()
+    public List<FacultyInfoDTO> findAllFaculties(int page, int pageSize) {
+        return facultyDAO.findAllFaculties(page, pageSize).stream()
                 .map(mapper::fromEntityToInfoDTO)
                 .peek(facultyInfoDTOValidator::validate)
-                .peek(facultyCardPDFGenerator::facultyCardOutputInFile)
+//                .peek(facultyCardPDFGenerator::facultyCardOutputInFile)
                 .collect(Collectors.toList());
     }
 

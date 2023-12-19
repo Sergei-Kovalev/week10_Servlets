@@ -3,7 +3,9 @@
 ---
 ___Содержание:___
 * Используемый стек.
+* Деплой
 * Описание.
+* Примеры запросов.
 ___     
 
 # Используемый стек и библиотеки.
@@ -16,66 +18,149 @@ ___
 7. Snakeyaml
 8. PostgreSQL
 9. PDFBox
-10. Группа сокурсников в Telegram
+10. HikariCP
+11. Rest-Assured
 ___
 
+# Деплой
+- использовался плагин Tomcat. 
+- проект генерировался с именем Faculty, т.е. Context Path = "/Faculty"
+- если забирать из build/libs, то тоже генерируется с этим именем
+
 # Описание.
-- Реализована печать документов в PDF с помощью PDBox. Файлы сохраняются в папку faculty_cards в корне проекта.
-- Реализованы следующие паттерны:
+- Сделаны сервлеты для CRUD операций и для findAll.
+- Для метода findAll() сделана пагинация с помощью Offset'а (глянул несколько вариантов, но, как мне показалось, этот вариант будет достаточно быстрым.. было бы быстрее только если бы в качестве id использовался int, а не UUID). Настройка количества элементов на странице делается в файле properties.yml. Если значение пустое, то будет 20.
+- Для метода GET по id реализована генерация в PDF.
+- - при использовании Tomcat Plugin, результат будет лежать в папке **C:\Users\Имя_Пользователя\.SmartTomcat\week6_ReflectionAPI\week6_ReflectionAPI.main\faculty_cards**
+- - при прямом переносе проекта в Tomcat сервер, в папке **\Tomcat 10.1\bin\faculty_cards**
+- При запросе метода Get с несуществующей сущностью - сервер отвечает с текстом ошибки и статусом **404**.
+- Инициализация данных БД реализована в объекте Config, который является Singleton'ом, что гарантирует, что инициализация будет единожды. Соответствующая настройка есть в properties.yml.
+- Добавлены 3 фильтра:
+- - фильтр для кодировки,
+- - фильтр для findAll() -> GET "/all" - позволяет проверить корректность ввода номера страницы.. если неверный, редиректит на страницу с номером 1.
+- - фильтр для отлова ошибки FacultyNotFoundException - выводит сообщение, а также возвращает статус **404**.
+- Добавлено тестирование работающего приложения с помощью **Rest Assured**. Находятся в директории **src/test/java/com/gmail/kovalev/restTests**. По умолчанию @Disabled. То есть их можно запустить после старта приложения, закомментировав аннотацию.
 
-  - Фасад.
-  
-  > Цель: передача в Main подготовленных запросов на CRUD операции и сокрытие их реализации от пользователя, который вызовет только соответстующие методы
-  
-  > Расположение: слой между контроллером и Main классом
+# Примеры запросов
+запрос Get / Read:
+http://localhost:8080/Faculty/faculty?uuid=773dcbc0-d2fa-45b4-acf8-485b682adedd
+* где uuid - id запрашиваемого факультета
+* ответ:
+~~~
+{
+    "id": "773dcbc0-d2fa-45b4-acf8-485b682adedd",
+    "name": "Geography",
+    "teacher": "Ivanov Petr Sidorovich",
+    "email": "geography@gmail.com",
+    "freePlaces": 13,
+    "pricePerDay": 6.72
+}
+~~~
 
-  - Фабрика:
-  
-  > Цель: создание нужных реализаций Кэша для использования в приложении. Позволяет проще добавлять новые реализации не затрагивая класс-клиент.
+запрос Get / Read:
+http://localhost:8080/Faculty/faculty?uuid=873dcbc0-d2fa-45b4-acf8-485b682adedd
+* где uuid - id запрашиваемого факультета / Неверное id
+* ответ (со статусом 404):
+~~~
+Faculty with id: 873dcbc0-d2fa-45b4-acf8-485b682adedd not found
+~~~
 
-  > Расположение: используется в FacultyDAOProxy классе
+запрос Get / Read для всех факультетов с пагинацией на 5 элементов(можно изменить в настройках):
+http://localhost:8080/Faculty/all?page=1
+* ответ:
+~~~
+[
+    {
+        "id": "773dcbc0-d2fa-45b4-acf8-485b682adedd",
+        "name": "Geography",
+        "teacher": "Ivanov Petr Sidorovich",
+        "email": "geography@gmail.com",
+        "freePlaces": 13,
+        "pricePerDay": 6.72
+    },
+    {
+        "id": "8d8cfc84-e77c-4722-b4d6-8e9fdc17c721",
+        "name": "Mathematics",
+        "teacher": "Kobrina Daria Nikolaevna",
+        "email": "mathematics@somewhere.by",
+        "freePlaces": 6,
+        "pricePerDay": 10.15
+    },
+    {
+        "id": "a8014a1e-c14c-410a-abd0-a2bc3014c3b3",
+        "name": "Physics",
+        "teacher": "Gauss Doreman Kolistos",
+        "email": "physics@somewhere.by",
+        "freePlaces": 20,
+        "pricePerDay": 15.15
+    },
+    {
+        "id": "da1a2959-363b-477e-ab23-66ef983a7568",
+        "name": "Astronomy",
+        "teacher": "Copernic Antip Petrovich",
+        "email": "astronomy@somewhere.by",
+        "freePlaces": 14,
+        "pricePerDay": 6.99
+    },
+    {
+        "id": "459f0e45-1e90-4f87-9570-162ec69a9890",
+        "name": "Russian",
+        "teacher": "Ivanova Irina Ivanovna",
+        "email": "russian@somewhere.by",
+        "freePlaces": 10,
+        "pricePerDay": 10
+    }
+]
+~~~
 
-  - Динамическое прокси:
-  
-  > Цель: создано по предыдущему заданию для подключения кэширования к приложению.
+запрос Post / Create:
+http://localhost:8080/Faculty/faculty
+>Body:
+>~~~
+>{
+>	"name": "Economic",
+>	"teacher": "Petrov Ivan Afeevich",
+>	"email": "econo-my647@yahoo.com",
+>	"actualVisitors": 10,
+>	"maxVisitors": 15,
+>	"pricePerDay": 9.99
+>}
+>~~~
+* ответ:
+~~~
+"The faculty Economic has been saved in the database with UUID: *Здесь будет рандомный uuid*"
+~~~
 
-  > Расположение: используется в классе FacultyServiceImpl где подменяет объект FacultyDAO.
-  
-  - Хранитель:
-  
-  > Цель: возврат в БД последнего удалённого объекта(на случай если пользователь передумал). Была мысль сохранять его в отдельный файл и потом читать.. но к реализации паттерна не относилась.. KISS так сказать
+запрос Put / Update:
+http://localhost:8080/Faculty/faculty?uuid=da1a2959-363b-477e-ab23-66ef983a7568
+* где uuid - id факультета для изменения
+> Body:
+>~~~
+>{
+>	"name": "Culture",
+>	"teacher": "Karamzina Anna Ivanovna",
+>	"email": "culture@yahoo.com",
+>	"actualVisitors": 20,
+>	"maxVisitors": 21,
+>	"pricePerDay": 9.99
+>}
+>~~~
+* ответ:
+~~~
+"The faculty with UUID: da1a2959-363b-477e-ab23-66ef983a7568 has been updated in the database."
+~~~
 
-  > Расположение: метод deleteFacultyByUUID класса FacultyDAOImpl, где сохраняет Entity в объекте Save.
-
-  > PS: Проверить работоспособность можно раскомментировав в Main 2 метода одновременно: facade.deleteSample(), facade.rollbackDeletedFaculty().
-  
-  - Стратегия:
-  
-  > Цель: выбор способа сохранения файла.
-
-  > Расположение: папка util проекта. Используется классом FacultyCardGenerator строка 50.
-
-  > PS: добавлена дополнительная возможность сохранения файлов в формате .txt, а также возможность выбора такого сохранения в properties.yml параметр - saving strategy.
-
-  - Декоратор
-  
-  > Цель: вывод сообщения о готовности сгенерированного файла и указание директории где его можно найти.
-
-  > Расположение: декорируется класс Saver в папке strategy, отвечающий за создание объектов для сохранения.
-
-  > PS: работу паттерна можно увидеть раскомментировав метод facade.findByIdSample() в классе Main.
-
-  - Одиночка
-  
-  > Цель: создание объекта не более 1го раза за всё время работы приложения.
-
-  > Расположение: реализован в классе Config, так как используется во многих местах приложения, а по сути только читается.
-
-  - Строитель
-  
-  > Цель: быстрое создание объектов.
-
-  > Реализован с использованием библиотеки Lombok. Используется в приложении для тестирования.
-
+запрос Delete:
+http://localhost:8080/Faculty/faculty?uuid=8d8cfc84-e77c-4722-b4d6-8e9fdc17c721
+* где uuid - id факультета для удаления
+* 
+* ответ:
+~~~
+"The faculty with UUID: 8d8cfc84-e77c-4722-b4d6-8e9fdc17c721 has been deleted."
+~~~
+* либо
+~~~
+"Faculty with id: 8d8cfc84-e77c-4722-b4d6-8e9fdc17c721 not found"
+~~~
 
 ###### CПАСИБО ЗА ВНИМАНИЕ !!!

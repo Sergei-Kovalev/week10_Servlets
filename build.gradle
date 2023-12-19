@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id "io.freefair.lombok" version "8.4"
+    id 'war'
 }
 
 group = 'by.clevertec'
@@ -23,6 +24,9 @@ ext {
 dependencies {
     implementation 'org.postgresql:postgresql:42.6.0'
 
+    compileOnly 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+    implementation 'com.zaxxer:HikariCP:5.1.0'
+
     implementation 'org.yaml:snakeyaml:2.2'
 
     implementation ("org.mapstruct:mapstruct:${mapstructVersion}")
@@ -34,11 +38,17 @@ dependencies {
 
     implementation 'org.apache.pdfbox:pdfbox:3.0.0'
 
+    testImplementation 'io.rest-assured:rest-assured:5.4.0'
     testImplementation 'org.assertj:assertj-core:3.24.2'
     testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testImplementation("org.junit.jupiter:junit-jupiter-params:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+}
+
+tasks.war {
+    archiveFileName.set("Faculty.war")
+    //destinationDirectory=buildDir
 }
 
 test {

@@ -2,17 +2,19 @@ package com.gmail.kovalev.config;
 
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author Sergey Kovalev
  * Класс для чтения конфигурации приложения из .yml файла.
  */
 public final class Config {
-    private static Config instance;
+    private static volatile Config instance;
     public Map<String, Map<String, String>> config;
 
     private Config() {
@@ -21,6 +23,7 @@ public final class Config {
 
     /**
      * Метод возвращающий ключ-значение параметров приложения.
+     *
      * @return ключ-значения.
      */
     private static Map<String, Map<String, String>> loadConfig() {
@@ -36,10 +39,42 @@ public final class Config {
             }
         }
     }
+
     public static Config getInstance() {
-        if (instance == null) {
-            instance = new Config();
+        Config localConfig = instance;
+        if (localConfig == null) {
+
+            synchronized (Config.class) {
+                localConfig = instance;
+                if (localConfig == null) {
+                    instance = new Config();
+                    instance.initDB(instance.config.get("application").get("reinitialize DB"));
+                }
+            }
+
         }
         return instance;
+    }
+
+    private void initDB(String isReinitialize) {
+        if (isReinitialize.equalsIgnoreCase("true")) {
+            try {
+                Class.forName("org.postgresql.Driver");
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+            try (Connection connection = DataSource.getConnection()) {
+                InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("table_for_db.sql");
+                String sql = null;
+                if (inputStream != null) {
+                    sql = new BufferedReader(new InputStreamReader(inputStream))
+                            .lines().collect(Collectors.joining());
+                }
+                Statement stmt = connection.createStatement();
+                stmt.execute(sql);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

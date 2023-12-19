@@ -9,7 +9,7 @@ import java.util.UUID;
 public interface FacultyService {
     FacultyInfoDTO findFacultyById(UUID uuid);
 
-    List<FacultyInfoDTO> findAllFaculties();
+    List<FacultyInfoDTO> findAllFaculties(int page, int pageSize);
 
     String saveFaculty(FacultyDTO facultyDTO);
 

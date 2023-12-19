@@ -11,6 +11,7 @@ import org.apache.pdfbox.pdmodel.font.PDType0Font;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class SaveToPDF implements Saver {
     @Override
@@ -21,7 +22,16 @@ public class SaveToPDF implements Saver {
         try {
             document = Loader.loadPDF(new File("src/main/resources/Clevertec_Template.pdf"));
         } catch (IOException e) {
-            throw new PDFTemplateNotFoundException();
+            try {
+                InputStream reader = this.getClass().getClassLoader().getResourceAsStream("/Clevertec_Template.pdf");
+                if (reader != null) {
+                    document = Loader.loadPDF(reader.readAllBytes());
+                } else {
+                    throw new RuntimeException();
+                }
+            } catch (IOException ex) {
+                throw new PDFTemplateNotFoundException();
+            }
         }
         try {
             PDPage page = document.getPage(0);

@@ -4,8 +4,10 @@ import com.gmail.kovalev.cache.Cache;
 import com.gmail.kovalev.cacheFactory.CacheFactory;
 import com.gmail.kovalev.dao.FacultyDAO;
 import com.gmail.kovalev.entity.Faculty;
+import com.gmail.kovalev.exception.FacultyNotFoundException;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.UUID;
 
@@ -25,7 +27,11 @@ public class FacultyDAOProxy implements InvocationHandler {
             case "findFacultyById" -> {
                 Faculty faculty = cache.get((UUID) args[0]);
                 if (faculty == null) {
-                    faculty = (Faculty) method.invoke(facultyDAO, args);
+                    try {
+                        faculty = (Faculty) method.invoke(facultyDAO, args);
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        throw new FacultyNotFoundException(args[0].toString());
+                    }
                     cache.set(faculty.getId(), faculty);
                 }
                 return faculty;

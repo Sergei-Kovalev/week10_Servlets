@@ -31,8 +31,8 @@ public class Controller {
         return gson.toJson(facultyById);
     }
 
-    public String findAllFaculties() {
-        List<FacultyInfoDTO> allFaculties = service.findAllFaculties();
+    public String findAllFaculties(int page, int pageSize) {
+        List<FacultyInfoDTO> allFaculties = service.findAllFaculties(page, pageSize);
         return gson.toJson(allFaculties);
     }
 

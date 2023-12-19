@@ -150,7 +150,7 @@ class FacultyServiceImplTest {
             expected.add(facultyInfoDTO2);
 
             doReturn(facultiesFromDB)
-                    .when(facultyDAO).findAllFaculties();
+                    .when(facultyDAO).findAllFaculties(1, 2);
             doReturn(facultyInfoDTO1)
                     .when(facultyMapper).fromEntityToInfoDTO(faculty1);
             doReturn(facultyInfoDTO2)
@@ -159,13 +159,9 @@ class FacultyServiceImplTest {
                     .when(facultyInfoDTOValidator).validate(facultyInfoDTO1);
             doReturn(facultyInfoDTO2)
                     .when(facultyInfoDTOValidator).validate(facultyInfoDTO2);
-            doNothing()
-                    .when(facultyCardPDFGenerator).facultyCardOutputInFile(facultyInfoDTO1);
-            doNothing()
-                    .when(facultyCardPDFGenerator).facultyCardOutputInFile(facultyInfoDTO2);
 
             // when
-            List<FacultyInfoDTO> actual = facultyService.findAllFaculties();
+            List<FacultyInfoDTO> actual = facultyService.findAllFaculties(1, 2);
 
             // then
             assertThat(actual)
