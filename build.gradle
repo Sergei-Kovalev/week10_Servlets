@@ -37,6 +37,7 @@ dependencies {
 
     implementation 'org.apache.pdfbox:pdfbox:3.0.0'
 
+    testImplementation 'io.rest-assured:rest-assured:5.4.0'
     testImplementation 'org.assertj:assertj-core:3.24.2'
     testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
