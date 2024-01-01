@@ -6,6 +6,9 @@ import com.gmail.kovalev.entity.Faculty;
 import com.gmail.kovalev.exception.FacultyNotFoundException;
 import com.gmail.kovalev.saver.Save;
 import com.gmail.kovalev.saver.Storage;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,14 +18,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Component("facultyDAOImpl")
 public class FacultyDAOImpl implements FacultyDAO {
 
     Storage storage;
     Faculty faculty;
 
-    public FacultyDAOImpl() {
-        this.storage = new Storage();
+    @Autowired
+    public FacultyDAOImpl(@Qualifier("storage") Storage storage) {
+        this.storage = storage;
     }
+//
+//    public FacultyDAOImpl() {
+//        this.storage = new Storage();
+//    }
 
     private final static String FIND_BY_ID = "SELECT * FROM faculties WHERE id = ?";
     private final static String FIND_ALL = """

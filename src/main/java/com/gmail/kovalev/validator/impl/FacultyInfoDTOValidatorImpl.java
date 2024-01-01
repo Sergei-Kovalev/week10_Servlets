@@ -3,6 +3,7 @@ package com.gmail.kovalev.validator.impl;
 import com.gmail.kovalev.dto.FacultyInfoDTO;
 import com.gmail.kovalev.exception.FacultyInfoDTOFormatException;
 import com.gmail.kovalev.validator.FacultyInfoDTOValidator;
+import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
@@ -13,6 +14,7 @@ import java.util.UUID;
  * и имплементирующий интерфейс:
  * @see FacultyInfoDTOValidator
  */
+@Component("facultyInfoDTOValidatorImpl")
 public class FacultyInfoDTOValidatorImpl implements FacultyInfoDTOValidator {
     /**
      * Общий метод для валидации объекта.

@@ -5,17 +5,22 @@ import com.gmail.kovalev.cacheFactory.CacheFactory;
 import com.gmail.kovalev.dao.FacultyDAO;
 import com.gmail.kovalev.entity.Faculty;
 import com.gmail.kovalev.exception.FacultyNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.UUID;
 
+@Component
 public class FacultyDAOProxy implements InvocationHandler {
     private final FacultyDAO facultyDAO;
     private final Cache<UUID, Faculty> cache;
 
-    public FacultyDAOProxy(FacultyDAO facultyDAO) {
+    @Autowired
+    public FacultyDAOProxy(@Qualifier("facultyDAOImpl") FacultyDAO facultyDAO) {
         this.facultyDAO = facultyDAO;
         this.cache = CacheFactory.createCacheByName();
     }

@@ -15,11 +15,6 @@ public class AppFacade {
         this.controller = controller;
     }
 
-//
-//    public AppFacade() {
-//        this.controller = new Controller();
-//    }
-
     public void findByIdSample() {
         //*****************БЛОК ДЛЯ ПОЛУЧЕНИЯ ПО ID************************
         String facultyById = controller.findFacultyById("773dcbc0-d2fa-45b4-acf8-485b682adedd");

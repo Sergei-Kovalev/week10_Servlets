@@ -5,9 +5,9 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.gmail.kovalev.dto.FacultyDTO;
 import com.gmail.kovalev.dto.FacultyInfoDTO;
 import com.gmail.kovalev.service.FacultyService;
-import com.gmail.kovalev.service.impl.FacultyServiceImpl;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -19,8 +19,8 @@ public class Controller {
     private final Gson gson;
     private final XmlMapper xmlMapper;
 
-    public Controller() {
-        this.service = new FacultyServiceImpl();
+    public Controller(@Qualifier("facultyServiceImpl") FacultyService service) {
+        this.service = service;
         this.gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .create();

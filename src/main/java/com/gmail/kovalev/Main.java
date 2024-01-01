@@ -7,10 +7,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 public class Main {
     public static void main(String[] args) {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
-
         AppFacade facade = context.getBean("appFacade", AppFacade.class);
-
-//        AppFacade facade = new AppFacade();
 
         facade.findByIdSample();
 

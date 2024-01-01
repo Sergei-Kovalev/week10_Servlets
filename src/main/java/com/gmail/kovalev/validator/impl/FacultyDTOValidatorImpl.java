@@ -3,6 +3,7 @@ package com.gmail.kovalev.validator.impl;
 import com.gmail.kovalev.dto.FacultyDTO;
 import com.gmail.kovalev.exception.FacultyDTOFormatException;
 import com.gmail.kovalev.validator.FacultyDTOValidator;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Sergey Kovalev
@@ -11,6 +12,7 @@ import com.gmail.kovalev.validator.FacultyDTOValidator;
  * и имплементирующий интерфейс:
  * @see FacultyDTOValidator
  */
+@Component("facultyDTOValidatorImpl")
 public class FacultyDTOValidatorImpl implements FacultyDTOValidator {
 
     /**

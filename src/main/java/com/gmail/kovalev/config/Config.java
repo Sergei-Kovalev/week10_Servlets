@@ -1,5 +1,6 @@
 package com.gmail.kovalev.config;
 
+import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
  * @author Sergey Kovalev
  * Класс для чтения конфигурации приложения из .yml файла.
  */
+@Component
 public final class Config {
     private static volatile Config instance;
     public Map<String, Map<String, String>> config;

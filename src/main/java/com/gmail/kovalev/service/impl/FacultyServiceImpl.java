@@ -1,7 +1,6 @@
 package com.gmail.kovalev.service.impl;
 
 import com.gmail.kovalev.dao.FacultyDAO;
-import com.gmail.kovalev.dao.impl.FacultyDAOImpl;
 import com.gmail.kovalev.dao.impl.FacultyDAOProxy;
 import com.gmail.kovalev.dto.FacultyDTO;
 import com.gmail.kovalev.dto.FacultyInfoDTO;
@@ -12,9 +11,10 @@ import com.gmail.kovalev.service.FacultyService;
 import com.gmail.kovalev.util.FacultyCardGenerator;
 import com.gmail.kovalev.validator.FacultyDTOValidator;
 import com.gmail.kovalev.validator.FacultyInfoDTOValidator;
-import com.gmail.kovalev.validator.impl.FacultyDTOValidatorImpl;
-import com.gmail.kovalev.validator.impl.FacultyInfoDTOValidatorImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Proxy;
 import java.util.List;
@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
  * @see FacultyService
  */
 @RequiredArgsConstructor
+@Component("facultyServiceImpl")
 public class FacultyServiceImpl implements FacultyService {
 
     /**
@@ -63,15 +64,19 @@ public class FacultyServiceImpl implements FacultyService {
      * Конструктор класса. Загружает необходимые имплементации сервисов.
      * facultyDAO тянет прокси объект
      */
-    public FacultyServiceImpl() {
-        this.mapper = new FacultyMapperImpl();
+    @Autowired
+    public FacultyServiceImpl(@Qualifier("facultyDTOValidatorImpl") FacultyDTOValidator facultyDTOValidator,
+                              @Qualifier("facultyInfoDTOValidatorImpl") FacultyInfoDTOValidator facultyInfoDTOValidator,
+                              @Qualifier("facultyCardGenerator") FacultyCardGenerator facultyCardPDFGenerator,
+                              @Qualifier("facultyDAOImpl") FacultyDAO facultyDAO) {
+        this.mapper = new FacultyMapperImpl(); //
         this.facultyDAO = (FacultyDAO) Proxy.newProxyInstance(
-                FacultyDAO.class.getClassLoader(), new Class[] {FacultyDAO.class}, new FacultyDAOProxy(new FacultyDAOImpl()));
-//        this.facultyDAO = new FacultyDAOImpl();
-        this.facultyDTOValidator = new FacultyDTOValidatorImpl();
-        this.facultyInfoDTOValidator = new FacultyInfoDTOValidatorImpl();
-        this.facultyCardPDFGenerator = new FacultyCardGenerator();
+                FacultyDAO.class.getClassLoader(), new Class[] {FacultyDAO.class}, new FacultyDAOProxy(facultyDAO));
+        this.facultyDTOValidator = facultyDTOValidator;
+        this.facultyInfoDTOValidator = facultyInfoDTOValidator;
+        this.facultyCardPDFGenerator = facultyCardPDFGenerator;
     }
+
 
     /**
      * Метод для получения объекта {@link FacultyInfoDTO} для передачи на фронт(UI)

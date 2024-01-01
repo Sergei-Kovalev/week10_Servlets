@@ -4,11 +4,13 @@ import com.gmail.kovalev.config.Config;
 import com.gmail.kovalev.dto.FacultyInfoDTO;
 import com.gmail.kovalev.exception.SaverNotFoundException;
 import com.gmail.kovalev.util.strategy.Context;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
+@Component("facultyCardGenerator")
 public class FacultyCardGenerator {
     private final static String FACULTY_CARD_TEMPLATE = """
             ---------------------------------------------------------------------
