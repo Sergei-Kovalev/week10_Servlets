@@ -8,10 +8,12 @@ import com.gmail.kovalev.service.FacultyService;
 import com.gmail.kovalev.service.impl.FacultyServiceImpl;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
 
+@Component("controller")
 public class Controller {
     private final FacultyService service;
     private final Gson gson;

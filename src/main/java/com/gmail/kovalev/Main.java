@@ -1,10 +1,16 @@
 package com.gmail.kovalev;
 
+import com.gmail.kovalev.config.SpringConfig;
 import com.gmail.kovalev.facade.AppFacade;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 public class Main {
     public static void main(String[] args) {
-        AppFacade facade = new AppFacade();
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
+
+        AppFacade facade = context.getBean("appFacade", AppFacade.class);
+
+//        AppFacade facade = new AppFacade();
 
         facade.findByIdSample();
 

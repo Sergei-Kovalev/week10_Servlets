@@ -1,14 +1,24 @@
 package com.gmail.kovalev.facade;
 
 import com.gmail.kovalev.controller.Controller;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
+@Component("appFacade")
 public class AppFacade {
 
     private final Controller controller;
 
-    public AppFacade() {
-        this.controller = new Controller();
+    @Autowired
+    public AppFacade(@Qualifier("controller") Controller controller) {
+        this.controller = controller;
     }
+
+//
+//    public AppFacade() {
+//        this.controller = new Controller();
+//    }
 
     public void findByIdSample() {
         //*****************БЛОК ДЛЯ ПОЛУЧЕНИЯ ПО ID************************
