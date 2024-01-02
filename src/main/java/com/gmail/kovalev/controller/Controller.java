@@ -7,6 +7,7 @@ import com.gmail.kovalev.dto.FacultyInfoDTO;
 import com.gmail.kovalev.service.FacultyService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +20,7 @@ public class Controller {
     private final Gson gson;
     private final XmlMapper xmlMapper;
 
+    @Autowired
     public Controller(@Qualifier("facultyServiceImpl") FacultyService service) {
         this.service = service;
         this.gson = new GsonBuilder()
