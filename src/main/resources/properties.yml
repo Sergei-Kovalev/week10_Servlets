@@ -1,11 +1,12 @@
 db:
+  driver: org.postgresql.Driver
   url: jdbc:postgresql://localhost:5432/faculty_db
   login: postgres
   password: postgres
 
 application:
   cache_type: LRU
-  cache_size: '10'
+  cache_size: 10
   saving_strategy: pdf
   page_size: 5
   reinitialize DB: 'true'

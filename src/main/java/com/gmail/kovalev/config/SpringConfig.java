@@ -24,6 +24,12 @@ public class SpringConfig {
     @Value("${application.page_size}")
     private int pageSize;
 
+    @Value("${application.cache_type}")
+    private String cacheType;
+
+    @Value("${application.cache_size}")
+    private int cacheSize;
+
     @Bean
     public static BeanFactoryPostProcessor beanFactoryPostProcessor() {
         PropertySourcesPlaceholderConfigurer configure = new PropertySourcesPlaceholderConfigurer();
@@ -35,10 +41,12 @@ public class SpringConfig {
     }
 
     @Bean
-    public HikariDataSource dataSource(@Value("${db.url}") String url,
+    public HikariDataSource dataSource(@Value("${db.driver}") String driver,
+                                       @Value("${db.url}") String url,
                                        @Value("${db.login}") String login,
                                        @Value("${db.password}") String password) {
         HikariDataSource dataSource = new HikariDataSource();
+        dataSource.setDriverClassName(driver);
         dataSource.setJdbcUrl(url);
         dataSource.setUsername(login);
         dataSource.setPassword(password);

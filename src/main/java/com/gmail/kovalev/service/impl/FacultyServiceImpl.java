@@ -1,5 +1,6 @@
 package com.gmail.kovalev.service.impl;
 
+import com.gmail.kovalev.config.SpringConfig;
 import com.gmail.kovalev.dao.FacultyDAO;
 import com.gmail.kovalev.dao.impl.FacultyDAOProxy;
 import com.gmail.kovalev.dto.FacultyDTO;
@@ -68,10 +69,11 @@ public class FacultyServiceImpl implements FacultyService {
     public FacultyServiceImpl(@Qualifier("facultyDTOValidatorImpl") FacultyDTOValidator facultyDTOValidator,
                               @Qualifier("facultyInfoDTOValidatorImpl") FacultyInfoDTOValidator facultyInfoDTOValidator,
                               @Qualifier("facultyCardGenerator") FacultyCardGenerator facultyCardPDFGenerator,
-                              @Qualifier("facultyDAOImpl") FacultyDAO facultyDAO) {
-        this.mapper = new FacultyMapperImpl(); //
+                              @Qualifier("facultyDAOImpl") FacultyDAO facultyDAO,
+                              @Qualifier("springConfig") SpringConfig springConfig) {
+        this.mapper = new FacultyMapperImpl();
         this.facultyDAO = (FacultyDAO) Proxy.newProxyInstance(
-                FacultyDAO.class.getClassLoader(), new Class[] {FacultyDAO.class}, new FacultyDAOProxy(facultyDAO));
+                FacultyDAO.class.getClassLoader(), new Class[] {FacultyDAO.class}, new FacultyDAOProxy(facultyDAO, springConfig.getCacheType(), springConfig.getCacheSize()));
         this.facultyDTOValidator = facultyDTOValidator;
         this.facultyInfoDTOValidator = facultyInfoDTOValidator;
         this.facultyCardPDFGenerator = facultyCardPDFGenerator;
