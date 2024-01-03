@@ -1,11 +1,11 @@
 package com.gmail.kovalev.dao.impl;
 
-import com.gmail.kovalev.config.DataSource;
 import com.gmail.kovalev.dao.FacultyDAO;
 import com.gmail.kovalev.entity.Faculty;
 import com.gmail.kovalev.exception.FacultyNotFoundException;
 import com.gmail.kovalev.saver.Save;
 import com.gmail.kovalev.saver.Storage;
+import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -21,17 +21,16 @@ import java.util.UUID;
 @Component("facultyDAOImpl")
 public class FacultyDAOImpl implements FacultyDAO {
 
-    Storage storage;
-    Faculty faculty;
+    private final Storage storage;
+    private Faculty faculty;
+
+    private final HikariDataSource dataSource;
 
     @Autowired
-    public FacultyDAOImpl(@Qualifier("storage") Storage storage) {
+    public FacultyDAOImpl(@Qualifier("storage") Storage storage, @Qualifier("dataSource") HikariDataSource dataSource) {
         this.storage = storage;
+        this.dataSource = dataSource;
     }
-//
-//    public FacultyDAOImpl() {
-//        this.storage = new Storage();
-//    }
 
     private final static String FIND_BY_ID = "SELECT * FROM faculties WHERE id = ?";
     private final static String FIND_ALL = """
@@ -54,7 +53,7 @@ public class FacultyDAOImpl implements FacultyDAO {
     @Override
     public Faculty findFacultyById(UUID uuid) throws FacultyNotFoundException {
         Faculty faculty = new Faculty();
-        try (Connection connection = DataSource.getConnection()) {
+        try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(FIND_BY_ID);
             statement.setObject(1, uuid);
             ResultSet resultSet = statement.executeQuery();
@@ -73,7 +72,7 @@ public class FacultyDAOImpl implements FacultyDAO {
     @Override
     public List<Faculty> findAllFaculties(int page, int pageSize) {
         List<Faculty> allFaculties = new ArrayList<>();
-        try (Connection connection = DataSource.getConnection()) {
+        try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(FIND_ALL);
             statement.setObject(1, pageSize);
             statement.setObject(2, (page - 1) * pageSize);
@@ -95,7 +94,7 @@ public class FacultyDAOImpl implements FacultyDAO {
         if (uuid == null) {
             uuid = UUID.randomUUID();
         }
-        try (Connection connection = DataSource.getConnection()) {
+        try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(SAVE_NEW_FACULTY);
             statement.setObject(1, uuid);
             statement.setString(2, faculty.getName());
@@ -115,7 +114,7 @@ public class FacultyDAOImpl implements FacultyDAO {
 
     @Override
     public String updateFaculty(Faculty faculty) {
-        try (Connection connection = DataSource.getConnection()) {
+        try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(UPDATE_FACULTY);
             statement.setString(1, faculty.getName());
             statement.setString(2, faculty.getTeacher());
@@ -141,7 +140,7 @@ public class FacultyDAOImpl implements FacultyDAO {
         }
         storage.setSave(saveCurrentVersion(faculty));
 
-        try (Connection connection = DataSource.getConnection()) {
+        try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(DELETE_BY_ID);
             statement.setObject(1, uuid);
 

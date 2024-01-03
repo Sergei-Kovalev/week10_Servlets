@@ -4,8 +4,8 @@ db:
   password: postgres
 
 application:
-  cache: LRU
-  collectionSize: '10'
-  saving strategy: pdf
-  page size: '5'
+  cache_type: LRU
+  cache_size: '10'
+  saving_strategy: pdf
+  page_size: 5
   reinitialize DB: 'true'

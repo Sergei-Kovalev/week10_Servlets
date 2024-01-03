@@ -1,6 +1,5 @@
 package com.gmail.kovalev.servlet;
 
-import com.gmail.kovalev.config.Config;
 import com.gmail.kovalev.config.SpringConfig;
 import com.gmail.kovalev.dto.FacultyInfoDTO;
 import com.gmail.kovalev.service.FacultyService;
@@ -23,7 +22,7 @@ public class ForAllServlet extends HttpServlet {
 
     private final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
 
-    FacultyService facultyService;
+    private FacultyService facultyService;
     private Gson gson;
     private int pageSize;
 
@@ -34,11 +33,9 @@ public class ForAllServlet extends HttpServlet {
         this.gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .create();
-        String size = Config.getInstance().config.get("application").get("page size");
-        if (size == null) {
+        pageSize = context.getBean("springConfig", SpringConfig.class).getPageSize();
+        if (pageSize == 0) {
             pageSize = 20;
-        } else {
-            pageSize = Integer.parseInt(size);
         }
     }
 

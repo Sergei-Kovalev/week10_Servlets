@@ -10,7 +10,7 @@ public interface CacheFactory {
     <K, V> Cache<K, V> createCache();
 
     static <K, V> Cache<K, V> createCacheByName() {
-        String cacheType = Config.getInstance().config.get("application").get("cache");
+        String cacheType = Config.getInstance().config.get("application").get("cache_type");
         if (cacheType.equalsIgnoreCase("LFU")) {
             return new LFUCacheFactory().createCache();
         } else if (cacheType.equalsIgnoreCase("LRU")) {
