@@ -1,6 +1,5 @@
 package com.gmail.kovalev.restTests;
 
-import com.gmail.kovalev.config.Config;
 import com.gmail.kovalev.dto.FacultyDTO;
 import com.gmail.kovalev.dto.FacultyInfoDTO;
 import com.gmail.kovalev.testData.FacultyDTOTestData;
@@ -8,8 +7,13 @@ import com.gmail.kovalev.testData.FacultyInfoDTOTestData;
 import jdk.jfr.Description;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.yaml.snakeyaml.Yaml;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
@@ -23,7 +27,9 @@ public class RestTest {
     @Test
     public void checkNumberElementsAtPage() {
         // given
-        int expected = Integer.parseInt(Config.getInstance().config.get("application").get("page size"));
+        Map<String, Map<String, Object>> ymlConfig = loadConfigFromYml();
+
+        int expected = (int) ymlConfig.get("application").get("page_size");
 
         // when
         Specifications.installSpecification(
@@ -226,5 +232,19 @@ public class RestTest {
         assertThat(actual)
                 .containsAnyOf("The faculty with UUID: 8d8cfc84-e77c-4722-b4d6-8e9fdc17c721 has been deleted.",
                         "Faculty with id: 8d8cfc84-e77c-4722-b4d6-8e9fdc17c721 not found");
+    }
+
+    private static Map<String, Map<String, Object>> loadConfigFromYml() {
+        try (InputStream inputStream = new FileInputStream("src/main/resources/properties.yml")) {
+            Yaml yaml = new Yaml();
+            return yaml.load(inputStream);
+        } catch (IOException e) {
+            try (InputStream inputStream = RestTest.class.getClassLoader().getResourceAsStream("properties.yml")) {
+                Yaml yaml = new Yaml();
+                return yaml.load(inputStream);
+            } catch (IOException exception) {
+                throw new RuntimeException(exception);
+            }
+        }
     }
 }

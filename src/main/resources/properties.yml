@@ -9,4 +9,4 @@ application:
   cache_size: 10
   saving_strategy: pdf
   page_size: 5
-  reinitialize DB: 'true'
+  reinitialize_DB: true
