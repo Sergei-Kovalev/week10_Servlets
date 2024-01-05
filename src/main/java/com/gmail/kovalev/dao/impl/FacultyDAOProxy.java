@@ -11,13 +11,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.UUID;
 
+//@Component
 public class FacultyDAOProxy implements InvocationHandler {
     private final FacultyDAO facultyDAO;
     private final Cache<UUID, Faculty> cache;
 
-    public FacultyDAOProxy(FacultyDAO facultyDAO) {
+//    @Autowired
+    public FacultyDAOProxy(FacultyDAO facultyDAO, String cacheType, int cacheSize) {
         this.facultyDAO = facultyDAO;
-        this.cache = CacheFactory.createCacheByName();
+        this.cache = CacheFactory.createCacheByName(cacheType, cacheSize);
     }
 
     @Override

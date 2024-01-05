@@ -1,5 +1,6 @@
 package com.gmail.kovalev.servlet;
 
+import com.gmail.kovalev.config.SpringConfig;
 import com.gmail.kovalev.controller.Controller;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletInputStream;
@@ -7,6 +8,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,11 +18,13 @@ import java.util.stream.Collectors;
 @WebServlet(name = "faculty", urlPatterns = {"/faculty"})
 public class FacultyServlet extends HttpServlet {
 
+    private final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
+
     Controller controller;
 
     @Override
     public void init(ServletConfig config) {
-        controller = new Controller();
+        controller = context.getBean("controller", Controller.class);
     }
 
     @Override

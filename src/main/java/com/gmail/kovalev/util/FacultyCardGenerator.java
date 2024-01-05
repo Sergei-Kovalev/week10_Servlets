@@ -1,14 +1,16 @@
 package com.gmail.kovalev.util;
 
-import com.gmail.kovalev.config.Config;
 import com.gmail.kovalev.dto.FacultyInfoDTO;
 import com.gmail.kovalev.exception.SaverNotFoundException;
 import com.gmail.kovalev.util.strategy.Context;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
+@Component("facultyCardGenerator")
 public class FacultyCardGenerator {
     private final static String FACULTY_CARD_TEMPLATE = """
             ---------------------------------------------------------------------
@@ -24,6 +26,9 @@ public class FacultyCardGenerator {
             """;
     private static final String CURRENCY = " BYN";
     private static final String DIRECTORY_NAME = "faculty_cards";
+
+    @Value("${application.saving_strategy}")
+    private String strategy;
 
     private String generateFacultyCard(FacultyInfoDTO facultyInfoDTO) {
         if (facultyInfoDTO == null) {
@@ -47,7 +52,7 @@ public class FacultyCardGenerator {
         String[] strings = generateFacultyCard(facultyInfoDTO).split("\n");
 
         Context context = new Context();
-        String strategy = Config.getInstance().config.get("application").get("saving strategy");
+
         if (strategy.equalsIgnoreCase("pdf")) {
             context.setSaver(new SaveToPDF());
             context.executeSaving(filePath, fileName, strings);
