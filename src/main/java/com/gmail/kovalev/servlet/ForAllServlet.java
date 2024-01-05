@@ -12,15 +12,13 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.ApplicationContext;
 
 import java.io.IOException;
 import java.util.List;
 
 @WebServlet(name = "all", urlPatterns = {"/all"})
 public class ForAllServlet extends HttpServlet {
-
-    private final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
 
     private FacultyService facultyService;
     private Gson gson;
@@ -29,6 +27,7 @@ public class ForAllServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
+        ApplicationContext context = (ApplicationContext) config.getServletContext().getAttribute("applicationContext");
         facultyService = context.getBean("facultyServiceImpl", FacultyServiceImpl.class);
         this.gson = new GsonBuilder()
                 .setPrettyPrinting()

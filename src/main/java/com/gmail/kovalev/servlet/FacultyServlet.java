@@ -1,14 +1,14 @@
 package com.gmail.kovalev.servlet;
 
-import com.gmail.kovalev.config.SpringConfig;
 import com.gmail.kovalev.controller.Controller;
 import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.ApplicationContext;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,12 +18,12 @@ import java.util.stream.Collectors;
 @WebServlet(name = "faculty", urlPatterns = {"/faculty"})
 public class FacultyServlet extends HttpServlet {
 
-    private final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
-
     Controller controller;
 
     @Override
-    public void init(ServletConfig config) {
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        ApplicationContext context = (ApplicationContext) config.getServletContext().getAttribute("applicationContext");
         controller = context.getBean("controller", Controller.class);
     }
 
